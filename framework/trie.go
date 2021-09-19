@@ -33,7 +33,7 @@ func newNode() *node {
 
 // 是否以:开头
 func isWildSegment(segment string) bool {
-	return strings.HasPrefix(segment, ":")
+	return strings.HasPrefix(segment, "/:")
 }
 
 // 寻找满足segment的子节点
@@ -57,8 +57,8 @@ func (n *node) filterChildNodes(segment string) []*node {
 
 // 寻找匹配uri的节点
 func (n *node) matchNode(uri string) *node {
-	segments := strings.SplitN(uri, "/", 2)
-	segment := segments[0]
+	segments := strings.SplitN(uri, "/", 3)
+	segment := "/"+segments[1]
 	if !isWildSegment(segment) {
 		segment = strings.ToUpper(segment)
 	}
@@ -66,7 +66,7 @@ func (n *node) matchNode(uri string) *node {
 	if len(nodes) <= 0 {
 		return nil
 	}
-	if len(segments) == 1 {
+	if len(segments) == 2 {
 		for i := 0; i < len(nodes); i++ {
 			if nodes[i].isLast {
 				return nodes[i]
@@ -75,7 +75,7 @@ func (n *node) matchNode(uri string) *node {
 		return nil
 	}
 	for i := 0; i < len(nodes); i++ {
-		if cNode := nodes[i].matchNode(segments[1]); cNode != nil {
+		if cNode := nodes[i].matchNode("/"+segments[2]); cNode != nil {
 			return cNode
 		}
 	}
@@ -90,6 +90,10 @@ func (t *tree) AddRouter(uri string, handler ControllerHandler) error {
 	segments := strings.Split(uri, "/")
 	n := t.root
 	for i, s := range segments {
+		if i == 0{
+			continue
+		}
+		s = "/"+s
 		isLast := false
 		if i == len(segments)-1 {
 			isLast = true

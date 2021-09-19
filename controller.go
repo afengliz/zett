@@ -1,32 +1,37 @@
 package main
 
 import "github.com/afengliz/zett/framework"
-
+func RootControllerHandler(ctx *framework.Context) error {
+	ctx.GetResponseWriter().Write([]byte("I am /"))
+	return nil
+}
 func FooControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("Foo"))
+	ctx.GetResponseWriter().Write([]byte("I am /foo"))
 	return nil
 }
 
 func HelloControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("Hello"))
+	ctx.GetResponseWriter().Write([]byte("I am /hello"))
 	return nil
 }
 
-func HelloPostControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("Hello Post"))
-	return nil
-}
+
 
 func UserInfoPostControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("User Info"))
+	ctx.GetResponseWriter().Write([]byte("I am /user/:id/info"))
 	return nil
 }
-func UserListPostControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("User List"))
+
+func UserRootControllerHandler(ctx *framework.Context) error {
+	ctx.GetResponseWriter().Write([]byte("I am /user root"))
+	return nil
+}
+func UserListControllerHandler(ctx *framework.Context) error {
+	ctx.GetResponseWriter().Write([]byte("I am /user/list"))
 	return nil
 }
 
 func UserVipVersionControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("User Vip Version"))
+	ctx.GetResponseWriter().Write([]byte("I am /user/vip/version"))
 	return nil
 }

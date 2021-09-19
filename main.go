@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-func main(){
+func main() {
 	core := framework.NewCore()
-	server := http.Server{Addr: ":8888",Handler: core}
+	server := http.Server{Addr: ":8888", Handler: core}
 	RegisterRouter(core)
 	server.ListenAndServe()
 }

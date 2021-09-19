@@ -2,12 +2,12 @@ package main
 
 import "github.com/afengliz/zett/framework"
 
-func FooControllerHandler(ctx *framework.Context) error{
+func FooControllerHandler(ctx *framework.Context) error {
 	ctx.GetResponseWriter().Write([]byte("Foo"))
 	return nil
 }
 
-func HelloControllerHandler(ctx *framework.Context) error{
+func HelloControllerHandler(ctx *framework.Context) error {
 	ctx.GetResponseWriter().Write([]byte("Hello"))
 	return nil
 }

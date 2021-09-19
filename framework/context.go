@@ -2,6 +2,7 @@ package framework
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"sync"
 	"time"
@@ -62,5 +63,22 @@ func (c *Context) Err() error {
 
 func (c *Context) Value(key interface{}) interface{} {
 	return c.ctx.Value(key)
+}
+
+func (c *Context) Json(status int,data interface{}) error{
+	if c.HasTimeOut(){
+		return nil
+	}
+	c.responseWriter.Header().Set("Content-Type","application/json")
+	c.responseWriter.WriteHeader(status)
+	if data != nil{
+		byt,err := json.Marshal(data)
+		if err != nil{
+			c.responseWriter.WriteHeader(500)
+			return err
+		}
+		c.responseWriter.Write(byt)
+	}
+	return nil
 }
 

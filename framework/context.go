@@ -12,15 +12,22 @@ type Context struct {
 	request        *http.Request
 	responseWriter http.ResponseWriter
 	ctx            context.Context
-	handler        ControllerHandler
+	handlers       []ControllerHandler
 	writerMux      *sync.Mutex
 	hasTimeOut     bool
+	index          int
 }
 
 var _ context.Context = (*Context)(nil)
 
 func NewContext(r *http.Request, w http.ResponseWriter) *Context {
-	return &Context{request: r, responseWriter: w, ctx: r.Context(), writerMux: &sync.Mutex{}}
+	return &Context{
+		request: r,
+		responseWriter: w,
+		ctx: r.Context(),
+		writerMux: &sync.Mutex{},
+		index: -1,
+	}
 }
 
 func (c *Context) GetRequest() *http.Request {
@@ -41,8 +48,8 @@ func (c *Context) SetHasTimeOut() {
 func (c *Context) HasTimeOut() bool {
 	return c.hasTimeOut
 }
-func (c *Context) SetHandler(handler ControllerHandler) {
-	c.handler = handler
+func (c *Context) SetHandler(handler ...ControllerHandler) {
+	c.handlers = handler
 }
 
 func (c *Context) BaseContext() context.Context {
@@ -78,6 +85,14 @@ func (c *Context) Json(status int, data interface{}) error {
 			return err
 		}
 		c.responseWriter.Write(byt)
+	}
+	return nil
+}
+
+func(c *Context) Next() error{
+	c.index++
+	if c.index< len(c.handlers){
+		return c.handlers[c.index](c)
 	}
 	return nil
 }

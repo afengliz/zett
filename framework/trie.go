@@ -19,7 +19,7 @@ func NewTree(mName HttpMethod) *tree {
 type node struct {
 	isLast  bool
 	segment string
-	handler ControllerHandler
+	handler []ControllerHandler
 	childes []*node
 }
 
@@ -83,7 +83,7 @@ func (n *node) matchNode(uri string) *node {
 }
 
 // 添加节点路由
-func (t *tree) AddRouter(uri string, handler ControllerHandler) error {
+func (t *tree) AddRouter(uri string, handler ...ControllerHandler) error {
 	if mNode := t.root.matchNode(uri); mNode != nil {
 		return errors.New("route exist:" + uri)
 	}
@@ -123,7 +123,7 @@ func (t *tree) AddRouter(uri string, handler ControllerHandler) error {
 }
 
 // 寻找路由对应的控制器
-func (t *tree) FindHandler(uri string) ControllerHandler {
+func (t *tree) FindHandler(uri string) []ControllerHandler {
 	matN := t.root.matchNode(uri)
 	if matN != nil {
 		return matN.handler

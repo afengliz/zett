@@ -1,6 +1,9 @@
 package main
 
-import "github.com/afengliz/zett/framework"
+import (
+	"github.com/afengliz/zett/framework"
+	"time"
+)
 func RootControllerHandler(ctx *framework.Context) error {
 	ctx.GetResponseWriter().Write([]byte("I am /"))
 	return nil
@@ -18,7 +21,8 @@ func HelloControllerHandler(ctx *framework.Context) error {
 
 
 func UserInfoPostControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("I am /user/:id/info"))
+	time.Sleep(time.Millisecond*1001)
+	ctx.Json(200,"I am /user/:id/info")
 	return nil
 }
 

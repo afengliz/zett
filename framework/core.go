@@ -8,6 +8,7 @@ import (
 
 type Core struct {
 	router map[string]*tree
+	middlewares []ControllerHandler
 }
 
 func NewCore() *Core {
@@ -27,43 +28,58 @@ func NewCore() *Core {
 	aRouter[HttPMethodDelete] = deleteR
 	return &Core{router: aRouter}
 }
-func (c *Core) FindRouteByRequest(request *http.Request) ControllerHandler {
+func (c *Core) FindRouteByRequest(request *http.Request) []ControllerHandler {
 	// 请求方法
 	methodName := strings.ToUpper(request.Method)
 	// 请求路劲
 	rPath := strings.ToUpper(request.URL.Path)
 	if mHandlers, ok := c.router[methodName]; ok {
-		if handler := mHandlers.FindHandler(rPath); handler != nil {
-			return handler
+		if handlers := mHandlers.FindHandler(rPath); handlers != nil {
+			return handlers
 		}
 	}
 	return nil
 }
 
-func (c *Core) Get(url string, handler ControllerHandler) {
+func (c *Core) Get(url string, handlers ...ControllerHandler) {
 	upUrl := strings.ToUpper(url)
-	if err := c.router[HttPMethodGet].AddRouter(upUrl, handler); err != nil {
+	var allHandlers []ControllerHandler
+	allHandlers = append(allHandlers,c.middlewares...)
+	allHandlers = append(allHandlers, handlers...)
+	if err := c.router[HttPMethodGet].AddRouter(upUrl, allHandlers...); err != nil {
 		log.Fatal("add router error: ", err)
 	}
 
 }
-func (c *Core) Post(url string, handler ControllerHandler) {
+func (c *Core) Post(url string, handlers ...ControllerHandler) {
 	upUrl := strings.ToUpper(url)
-	if err := c.router[HttPMethodPost].AddRouter(upUrl, handler); err != nil {
+	var allHandlers []ControllerHandler
+	allHandlers = append(allHandlers,c.middlewares...)
+	allHandlers = append(allHandlers, handlers...)
+	if err := c.router[HttPMethodPost].AddRouter(upUrl, allHandlers...); err != nil {
 		log.Fatal("add router error: ", err)
 	}
 }
-func (c *Core) Put(url string, handler ControllerHandler) {
+func (c *Core) Put(url string, handlers ...ControllerHandler) {
 	upUrl := strings.ToUpper(url)
-	if err := c.router[HttPMethodPut].AddRouter(upUrl, handler); err != nil {
+	var allHandlers []ControllerHandler
+	allHandlers = append(allHandlers,c.middlewares...)
+	allHandlers = append(allHandlers, handlers...)
+	if err := c.router[HttPMethodPut].AddRouter(upUrl, allHandlers...); err != nil {
 		log.Fatal("add router error: ", err)
 	}
 }
-func (c *Core) Delete(url string, handler ControllerHandler) {
+func (c *Core) Delete(url string, handlers ...ControllerHandler) {
 	upUrl := strings.ToUpper(url)
-	if err := c.router[HttPMethodDelete].AddRouter(upUrl, handler); err != nil {
+	var allHandlers []ControllerHandler
+	allHandlers = append(allHandlers,c.middlewares...)
+	allHandlers = append(allHandlers, handlers...)
+	if err := c.router[HttPMethodDelete].AddRouter(upUrl, allHandlers...); err != nil {
 		log.Fatal("add router error: ", err)
 	}
+}
+func (c *Core) Use(middlewares ...ControllerHandler){
+	c.middlewares = middlewares
 }
 
 func (c *Core) Group(gName string) IGroup {
@@ -77,6 +93,9 @@ func (c *Core) ServeHTTP(response http.ResponseWriter, request *http.Request) {
 		ctx.Json(http.StatusNotFound, nil)
 		return
 	}
-	ctx.SetHandler(router)
-	router(ctx)
+	ctx.SetHandler(router...)
+	if err := ctx.Next();err != nil{
+		ctx.Json(500,"internal error")
+		return
+	}
 }

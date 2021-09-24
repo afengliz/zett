@@ -53,3 +53,19 @@ func PostFormParamControllerHandler(ctx *framework.Context) error {
 	ctx.GetResponseWriter().Write([]byte(cast.ToString(userid)))
 	return nil
 }
+
+func TestJson(ctx *framework.Context) error {
+	type Student struct {
+		Name string `json:"name"`
+		Age int `json:"age"`
+	}
+	s := Student{}
+	err := ctx.BindJson(&s)
+	if err != nil{
+		ctx.Json(500,err.Error())
+		return err
+	}
+	res := fmt.Sprintf("%+v",s)
+	ctx.Json(200,res)
+	return nil
+}

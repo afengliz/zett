@@ -1,7 +1,11 @@
 package framework
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"github.com/spf13/cast"
+	"io/ioutil"
 	"strings"
 )
 
@@ -30,6 +34,8 @@ type IRequest interface {
 	FormString(key string, def string) (string, bool)
 	FormStringSlice(key string, def []string) ([]string, bool)
 	Form(key string) interface{}
+	FormAll() map[string][]string
+	BindJson(obj interface{}) error
 }
 
 var _ IRequest = (*Context)(nil)
@@ -251,10 +257,27 @@ func (c *Context) Form(key string) interface{} {
 	}
 	return nil
 }
+
 func (c *Context) FormAll() map[string][]string {
 	if c.request != nil {
 		c.request.ParseForm()
 		return c.request.PostForm
 	}
 	return map[string][]string{}
+}
+
+func (c *Context) BindJson(obj interface{}) error{
+	if c.request != nil{
+		body,err := ioutil.ReadAll(c.request.Body)
+		if err != nil{
+			return err
+		}
+		c.request.Body = ioutil.NopCloser(bytes.NewReader(body))
+		err = json.Unmarshal(body,obj)
+		if err != nil{
+			return err
+		}
+		return nil
+	}
+	return errors.New("ctx.request empty")
 }

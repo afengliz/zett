@@ -25,8 +25,10 @@ func TimeoutMiddleware(t time.Duration) framework.ControllerHandler {
 		}()
 		var anserr error
 		select {
-		case <-finishChan:
-			//fmt.Println("normal finish")
+		case err:=<-finishChan:
+			if err != nil{
+				ctx.Json(500, err.Error())
+			}
 		case err := <-panicChan:
 			fmt.Println("panic:", err)
 			ctx.Json(500, "panic")

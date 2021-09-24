@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>
+    receive <span id="qwerty"> </span>
+</div>
+</body>
+<script>
+    function callfun(data) {
+        document.getElementById('qwerty').innerHTML = data;
+    }
+</script>
+<script src="http://localhost:8888/user/test_jsonp?callback=callfun"></script>
+</html>

@@ -58,6 +58,10 @@ func (c *Context) SetParams(params map[string]string) {
 	c.params = params
 }
 
+func (c *Context) SetHeader(key string,val string){
+	c.responseWriter.Header().Set(key,val)
+}
+
 func (c *Context) BaseContext() context.Context {
 	return c.request.Context()
 }

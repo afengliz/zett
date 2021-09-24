@@ -8,7 +8,7 @@ import (
 
 func RegisterRouter(core *framework.Core) {
 	// middleware支持
-	core.Use(middlewares.Test3())
+	core.Use(middlewares.Test3(),middlewares.TimeoutMiddleware(time.Second))
 	// 静态路由
 	core.Get("/", RootControllerHandler)
 	core.Get("/foo", FooControllerHandler)
@@ -18,7 +18,7 @@ func RegisterRouter(core *framework.Core) {
 		uGroup.Get("/", UserRootControllerHandler)
 		// 动态路由
 		uGroup.Get("/list", UserListControllerHandler)
-		uGroup.Get("/:id/info", middlewares.TimeoutMiddleware(time.Second), UserInfoGetControllerHandler)
+		uGroup.Get("/:id/info",  UserInfoGetControllerHandler)
 		vGroup := uGroup.Group("/vip")
 		{
 			vGroup.Get("/version", UserVipVersionControllerHandler)
@@ -31,5 +31,7 @@ func RegisterRouter(core *framework.Core) {
 		uGroup.Post("/test_form_file", TestFormFile)
 		uGroup.Post("/test_header", TestHeaderControllerHandler)
 		uGroup.Post("/test_cookie", TestCookieControllerHandler)
+		uGroup.Get("/test_jsonp", TestJsonPControllerHandler)
+
 	}
 }

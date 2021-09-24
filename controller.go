@@ -108,3 +108,7 @@ func TestCookieControllerHandler(ctx *framework.Context) error {
 	hMap := ctx.Cookies()
 	return ctx.Json(200,hMap)
 }
+
+func TestJsonPControllerHandler(ctx *framework.Context) error{
+	return ctx.JsonP("liyanfeng")
+}

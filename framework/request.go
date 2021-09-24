@@ -44,6 +44,11 @@ type IRequest interface {
 	Host() string
 	Method() string
 	ClientIp() string
+	Headers() map[string][]string
+	Header(string) (string,bool)
+	Cookies() map[string]string
+	Cookie(string) (string,bool)
+
 }
 
 var _ IRequest = (*Context)(nil)
@@ -366,4 +371,39 @@ func (c *Context) ClientIp() string{
 		}
 	}
 	return ipAddress
+}
+
+func (c *Context) Headers() map[string][]string {
+	if c.request != nil{
+		return c.request.Header
+	}
+	return map[string][]string{}
+}
+
+func (c *Context) Header(key string) (string, bool) {
+	if c.request != nil{
+		if vals,ok:=c.request.Header[key];ok{
+			return vals[0],true
+		}
+	}
+	return "",false
+}
+
+func (c *Context) Cookies() map[string]string {
+	ans := map[string]string{}
+	if c.request != nil{
+		arr := c.request.Cookies()
+		for i:=0;i<len(arr);i++{
+			ans[arr[i].Name] = arr[i].Value
+		}
+	}
+	return ans
+}
+
+func (c *Context) Cookie(key string) (string,bool) {
+	cMap := c.Cookies()
+	if val,ok:=cMap[key];ok{
+		return val,true
+	}
+	return "",false
 }

@@ -98,3 +98,13 @@ func TestFormFile(ctx *framework.Context) error {
 	ctx.Json(200,ctx.ClientIp())
 	return nil
 }
+
+func TestHeaderControllerHandler(ctx *framework.Context) error {
+	hMap,_ := ctx.Header("Username")
+	return ctx.Json(200,hMap)
+}
+
+func TestCookieControllerHandler(ctx *framework.Context) error {
+	hMap := ctx.Cookies()
+	return ctx.Json(200,hMap)
+}

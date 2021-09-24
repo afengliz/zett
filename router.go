@@ -29,5 +29,7 @@ func RegisterRouter(core *framework.Core) {
 		uGroup.Post("/test_xml", TestXmlControllerHandler)
 		uGroup.Post("/test_get_client_address", TestGetClientAddress)
 		uGroup.Post("/test_form_file", TestFormFile)
+		uGroup.Post("/test_header", TestHeaderControllerHandler)
+		uGroup.Post("/test_cookie", TestCookieControllerHandler)
 	}
 }

@@ -21,6 +21,7 @@ type node struct {
 	segment string
 	handler []ControllerHandler
 	childes []*node
+	parent  *node
 }
 
 func newNode() *node {
@@ -58,7 +59,7 @@ func (n *node) filterChildNodes(segment string) []*node {
 // 寻找匹配uri的节点
 func (n *node) matchNode(uri string) *node {
 	segments := strings.SplitN(uri, "/", 3)
-	segment := "/"+segments[1]
+	segment := "/" + segments[1]
 	if !isWildSegment(segment) {
 		segment = strings.ToUpper(segment)
 	}
@@ -75,11 +76,29 @@ func (n *node) matchNode(uri string) *node {
 		return nil
 	}
 	for i := 0; i < len(nodes); i++ {
-		if cNode := nodes[i].matchNode("/"+segments[2]); cNode != nil {
+		if cNode := nodes[i].matchNode("/" + segments[2]); cNode != nil {
 			return cNode
 		}
 	}
 	return nil
+}
+
+// 将 uri 解析为 params
+func (n *node) parseParamsFromEndNode(uri string) map[string]string {
+	ret := map[string]string{}
+	if !n.isLast {
+		return ret
+	}
+	curN := n
+	uri = strings.ToUpper(uri)
+	segments := strings.Split(uri, "/")
+	for i := len(segments) - 1; i >= 0; i-- {
+		if isWildSegment(curN.segment) {
+			ret[curN.segment[2:]] = segments[i]
+		}
+		curN = curN.parent
+	}
+	return ret
 }
 
 // 添加节点路由
@@ -90,10 +109,10 @@ func (t *tree) AddRouter(uri string, handler ...ControllerHandler) error {
 	segments := strings.Split(uri, "/")
 	n := t.root
 	for i, s := range segments {
-		if i == 0{
+		if i == 0 {
 			continue
 		}
-		s = "/"+s
+		s = "/" + s
 		isLast := false
 		if i == len(segments)-1 {
 			isLast = true
@@ -115,18 +134,10 @@ func (t *tree) AddRouter(uri string, handler ...ControllerHandler) error {
 				cNode.isLast = true
 				cNode.handler = handler
 			}
+			cNode.parent = n
 			n.childes = append(n.childes, cNode)
 		}
 		n = cNode
-	}
-	return nil
-}
-
-// 寻找路由对应的控制器
-func (t *tree) FindHandler(uri string) []ControllerHandler {
-	matN := t.root.matchNode(uri)
-	if matN != nil {
-		return matN.handler
 	}
 	return nil
 }

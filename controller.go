@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/afengliz/zett/framework"
+	"github.com/spf13/cast"
 	"time"
 )
+
 func RootControllerHandler(ctx *framework.Context) error {
 	ctx.GetResponseWriter().Write([]byte("I am /"))
 	return nil
@@ -18,11 +21,10 @@ func HelloControllerHandler(ctx *framework.Context) error {
 	return nil
 }
 
-
-
-func UserInfoPostControllerHandler(ctx *framework.Context) error {
-	time.Sleep(time.Millisecond*1001)
-	ctx.Json(200,"I am /user/:id/info")
+func UserInfoGetControllerHandler(ctx *framework.Context) error {
+	time.Sleep(time.Millisecond * 500)
+	paramId, _ := ctx.ParamInt("id", -1)
+	ctx.Json(200, fmt.Sprintf("I am /user/:id/info data:%d", paramId))
 	return nil
 }
 
@@ -37,5 +39,17 @@ func UserListControllerHandler(ctx *framework.Context) error {
 
 func UserVipVersionControllerHandler(ctx *framework.Context) error {
 	ctx.GetResponseWriter().Write([]byte("I am /user/vip/version"))
+	return nil
+}
+
+func GetQueryParamControllerHandler(ctx *framework.Context) error {
+	userid, _ := ctx.QueryInt("id", -1)
+	ctx.GetResponseWriter().Write([]byte(cast.ToString(userid)))
+	return nil
+}
+
+func PostFormParamControllerHandler(ctx *framework.Context) error {
+	userid, _ := ctx.FormInt("id", -1)
+	ctx.GetResponseWriter().Write([]byte(cast.ToString(userid)))
 	return nil
 }

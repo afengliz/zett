@@ -26,11 +26,11 @@ func TimeoutMiddleware(t time.Duration) framework.ControllerHandler {
 		var anserr error
 		select {
 		case <-finishChan:
-			fmt.Println("normal finish")
+			//fmt.Println("normal finish")
 		case err := <-panicChan:
 			fmt.Println("panic:", err)
 			ctx.Json(500, "panic")
-			anserr = errors.New(fmt.Sprintf("panic err:%+v",err))
+			anserr = errors.New(fmt.Sprintf("panic err:%+v", err))
 		case <-toutCtx.Done():
 			ctx.Json(500, "time out")
 			ctx.SetHasTimeOut()

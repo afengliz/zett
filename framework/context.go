@@ -13,6 +13,7 @@ type Context struct {
 	responseWriter http.ResponseWriter
 	ctx            context.Context
 	handlers       []ControllerHandler
+	params         map[string]string // url路由匹配的参数
 	writerMux      *sync.Mutex
 	hasTimeOut     bool
 	index          int
@@ -22,11 +23,11 @@ var _ context.Context = (*Context)(nil)
 
 func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 	return &Context{
-		request: r,
+		request:        r,
 		responseWriter: w,
-		ctx: r.Context(),
-		writerMux: &sync.Mutex{},
-		index: -1,
+		ctx:            r.Context(),
+		writerMux:      &sync.Mutex{},
+		index:          -1,
 	}
 }
 
@@ -50,6 +51,9 @@ func (c *Context) HasTimeOut() bool {
 }
 func (c *Context) SetHandler(handler ...ControllerHandler) {
 	c.handlers = handler
+}
+func (c *Context) SetParams(params map[string]string) {
+	c.params = params
 }
 
 func (c *Context) BaseContext() context.Context {
@@ -89,9 +93,9 @@ func (c *Context) Json(status int, data interface{}) error {
 	return nil
 }
 
-func(c *Context) Next() error{
+func (c *Context) Next() error {
 	c.index++
-	if c.index< len(c.handlers){
+	if c.index < len(c.handlers) {
 		return c.handlers[c.index](c)
 	}
 	return nil

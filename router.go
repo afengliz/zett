@@ -15,13 +15,15 @@ func RegisterRouter(core *framework.Core) {
 	core.Get("/hello", HelloControllerHandler)
 	uGroup := core.Group("/user")
 	{
-		uGroup.Get("/",UserRootControllerHandler)
+		uGroup.Get("/", UserRootControllerHandler)
 		// 动态路由
 		uGroup.Get("/list", UserListControllerHandler)
-		uGroup.Get("/:id/info",middlewares.TimeoutMiddleware(time.Second),UserInfoPostControllerHandler)
+		uGroup.Get("/:id/info", middlewares.TimeoutMiddleware(time.Second), UserInfoGetControllerHandler)
 		vGroup := uGroup.Group("/vip")
 		{
 			vGroup.Get("/version", UserVipVersionControllerHandler)
 		}
+		uGroup.Get("/info", GetQueryParamControllerHandler)
+		uGroup.Post("/test_form", PostFormParamControllerHandler)
 	}
 }

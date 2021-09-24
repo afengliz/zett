@@ -54,7 +54,7 @@ func PostFormParamControllerHandler(ctx *framework.Context) error {
 	return nil
 }
 
-func TestJson(ctx *framework.Context) error {
+func TestJsonControllerHandler(ctx *framework.Context) error {
 	type Student struct {
 		Name string `json:"name"`
 		Age int `json:"age"`
@@ -67,5 +67,34 @@ func TestJson(ctx *framework.Context) error {
 	}
 	res := fmt.Sprintf("%+v",s)
 	ctx.Json(200,res)
+	return nil
+}
+
+
+func TestXmlControllerHandler(ctx *framework.Context) error {
+	type Student struct {
+		Name string `xml:"name"`
+		Age int `xml:"age"`
+	}
+	s := Student{}
+	err := ctx.BindXml(&s)
+	if err != nil{
+		ctx.Json(500,err.Error())
+		return err
+	}
+	res := fmt.Sprintf("%+v",s)
+	ctx.Json(200,res)
+	return nil
+}
+
+func TestGetClientAddress(ctx *framework.Context) error {
+	ctx.Json(200,ctx.ClientIp())
+	return nil
+}
+
+func TestFormFile(ctx *framework.Context) error {
+	header,_ := ctx.FormFile("field-name")
+	fmt.Printf("%+v",header)
+	ctx.Json(200,ctx.ClientIp())
 	return nil
 }

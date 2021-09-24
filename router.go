@@ -25,6 +25,9 @@ func RegisterRouter(core *framework.Core) {
 		}
 		uGroup.Get("/info", GetQueryParamControllerHandler)
 		uGroup.Post("/test_form", PostFormParamControllerHandler)
-		uGroup.Post("/test_json", TestJson)
+		uGroup.Post("/test_json", TestJsonControllerHandler)
+		uGroup.Post("/test_xml", TestXmlControllerHandler)
+		uGroup.Post("/test_get_client_address", TestGetClientAddress)
+		uGroup.Post("/test_form_file", TestFormFile)
 	}
 }

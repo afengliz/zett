@@ -1,0 +1,24 @@
+POST http://localhost:8888/user/test_form_file
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="field-name"; filename="test_upload_file.txt"
+
+< ./test_upload_file.txt
+--WebAppBoundary--
+
+###
+
+###
+POST http://localhost:8888/user/test_json
+Content-Type: application/json
+
+{
+  "name": "liyanfeng",
+  "age": 123
+}
+
+###
+POST http://localhost:8888/user/test_get_client_address
+
+###

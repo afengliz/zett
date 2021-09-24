@@ -3,12 +3,14 @@ package framework
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"github.com/spf13/cast"
 	"io/ioutil"
+	"mime/multipart"
 	"strings"
 )
-
+const defaultMultipartMemory = 32 << 20 // 32 MB
 type IRequest interface {
 	QueryInt(key string, def int) (int, bool)
 	QueryInt64(key string, def int64) (int64, bool)
@@ -35,7 +37,13 @@ type IRequest interface {
 	FormStringSlice(key string, def []string) ([]string, bool)
 	Form(key string) interface{}
 	FormAll() map[string][]string
+	FormFile(key string) (*multipart.FileHeader, error)
 	BindJson(obj interface{}) error
+	BindXml(obj interface{}) error
+	Uri() string
+	Host() string
+	Method() string
+	ClientIp() string
 }
 
 var _ IRequest = (*Context)(nil)
@@ -266,6 +274,20 @@ func (c *Context) FormAll() map[string][]string {
 	return map[string][]string{}
 }
 
+func (ctx *Context) FormFile(key string) (*multipart.FileHeader, error) {
+	if ctx.request.MultipartForm == nil {
+		if err := ctx.request.ParseMultipartForm(defaultMultipartMemory); err != nil {
+			return nil, err
+		}
+	}
+	f, fh, err := ctx.request.FormFile(key)
+	if err != nil {
+		return nil, err
+	}
+	f.Close()
+	return fh, err
+}
+
 func (c *Context) BindJson(obj interface{}) error{
 	if c.request != nil{
 		body,err := ioutil.ReadAll(c.request.Body)
@@ -280,4 +302,68 @@ func (c *Context) BindJson(obj interface{}) error{
 		return nil
 	}
 	return errors.New("ctx.request empty")
+}
+
+func (c *Context) BindXml(obj interface{}) error{
+	if c.request != nil{
+		body,err := ioutil.ReadAll(c.request.Body)
+		if err != nil{
+			return err
+		}
+		c.request.Body = ioutil.NopCloser(bytes.NewReader(body))
+		err = xml.Unmarshal(body,obj)
+		if err != nil{
+			return err
+		}
+		return nil
+	}
+	return errors.New("ctx.request empty")
+}
+
+func (c *Context) GetRawData() ([]byte, error) {
+	if c.request != nil {
+		body, err := ioutil.ReadAll(c.request.Body)
+		if err != nil {
+			return nil,err
+		}
+		c.request.Body = ioutil.NopCloser(bytes.NewReader(body))
+		return body,nil
+	}
+	return nil,nil
+}
+
+func (c *Context) Uri() string{
+	var uri string
+	if c.request != nil{
+		uri = c.request.RequestURI
+	}
+	return uri
+}
+func (c *Context) Host() string{
+	var host string
+	if c.request != nil{
+		host = c.request.Host
+	}
+	return host
+}
+func (c *Context) Method() string{
+	var mtname string
+	if c.request != nil{
+		mtname = c.request.Method
+	}
+	return mtname
+}
+
+func (c *Context) ClientIp() string{
+	var ipAddress string
+	if r := c.request;r != nil{
+		ipAddress = r.Header.Get("X-Real-Ip")
+		if ipAddress == "" {
+			ipAddress = r.Header.Get("X-Forwarded-For")
+		}
+		if ipAddress == "" {
+			ipAddress = r.RemoteAddr
+		}
+	}
+	return ipAddress
 }

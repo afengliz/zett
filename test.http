@@ -1,3 +1,7 @@
+GET http://localhost:8888/user/test_redirect
+Accept: application/json
+
+###
 POST http://localhost:8888/user/test_header
 Content-Type: application/json
 username: liyanfeng
@@ -33,6 +37,24 @@ Content-Type: application/json
 POST http://localhost:8888/user/test_get_client_address
 
 ###
+POST http://localhost:8888/user/test_xml
+Content-Type: application/xml
+
+<root>
+    <name>liyanfneg</name>
+    <age>26</age>
+</root>
+
+###
+POST /user/test_html HTTP/1.1
+Host: 127.0.0.1:8888
 
 
+###
+POST /user/test_text
+Host: 127.0.0.1:8888
 
+
+###
+GET /user/test_redirect HTTP/1.1
+Host: localhost:8888

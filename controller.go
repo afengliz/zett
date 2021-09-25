@@ -82,8 +82,7 @@ func TestXmlControllerHandler(ctx *framework.Context) error {
 		ctx.Json(500,err.Error())
 		return err
 	}
-	res := fmt.Sprintf("%+v",s)
-	ctx.Json(200,res)
+	ctx.Xml(s)
 	return nil
 }
 
@@ -110,5 +109,27 @@ func TestCookieControllerHandler(ctx *framework.Context) error {
 }
 
 func TestJsonPControllerHandler(ctx *framework.Context) error{
-	return ctx.JsonP("liyanfeng")
+	type Student struct{
+		Name string `json:"name"`
+		Age int `json:"age"`
+	}
+	return ctx.JsonP(Student{"liyanfeng",26})
+}
+
+func TestHtmlControllerHandler(ctx *framework.Context) error{
+	type Student struct{
+		Name string `json:"name"`
+		Age int `json:"age"`
+	}
+	return ctx.Html("./test_html_template.html",Student{"liyanfeng",26})
+}
+
+func TestTextControllerHandler(ctx *framework.Context) error{
+	format := "my name is %s,age is %d"
+	return ctx.Text(format,"liyanfeng",26)
+}
+
+func TestRedirectControllerHandler(ctx *framework.Context) error{
+	ctx.Redirect("/user/info")
+	return nil
 }

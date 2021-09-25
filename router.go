@@ -32,6 +32,9 @@ func RegisterRouter(core *framework.Core) {
 		uGroup.Post("/test_header", TestHeaderControllerHandler)
 		uGroup.Post("/test_cookie", TestCookieControllerHandler)
 		uGroup.Get("/test_jsonp", TestJsonPControllerHandler)
+		uGroup.Post("/test_html", TestHtmlControllerHandler)
+		uGroup.Post("/test_text", TestTextControllerHandler)
+		uGroup.Get("/test_redirect", TestRedirectControllerHandler)
 
 	}
 }

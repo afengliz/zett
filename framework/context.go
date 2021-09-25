@@ -2,7 +2,6 @@ package framework
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"sync"
 	"time"
@@ -18,7 +17,6 @@ type Context struct {
 	hasTimeOut     bool
 	index          int
 }
-
 
 
 var _ context.Context = (*Context)(nil)
@@ -58,10 +56,6 @@ func (c *Context) SetParams(params map[string]string) {
 	c.params = params
 }
 
-func (c *Context) SetHeader(key string,val string){
-	c.responseWriter.Header().Set(key,val)
-}
-
 func (c *Context) BaseContext() context.Context {
 	return c.request.Context()
 }
@@ -82,22 +76,7 @@ func (c *Context) Value(key interface{}) interface{} {
 	return c.ctx.Value(key)
 }
 
-func (c *Context) Json(status int, data interface{}) error {
-	if c.HasTimeOut() {
-		return nil
-	}
-	c.responseWriter.Header().Set("Content-Type", "application/json")
-	c.responseWriter.WriteHeader(status)
-	if data != nil {
-		byt, err := json.Marshal(data)
-		if err != nil {
-			c.responseWriter.WriteHeader(500)
-			return err
-		}
-		c.responseWriter.Write(byt)
-	}
-	return nil
-}
+
 
 func (c *Context) Next() error {
 	c.index++

@@ -7,7 +7,7 @@
 </body>
 <script>
     function callfun(data) {
-        document.getElementById('qwerty').innerHTML = data;
+        document.getElementById('qwerty').innerHTML = "name:"+data.name + ",age:"+data.age;
     }
 </script>
 <script src="http://localhost:8888/user/test_jsonp?callback=callfun"></script>

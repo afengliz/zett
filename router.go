@@ -8,7 +8,7 @@ import (
 
 func RegisterRouter(core *framework.Core) {
 	// middleware支持
-	core.Use(middlewares.Test3(),middlewares.TimeoutMiddleware(time.Second))
+	core.Use(middlewares.Test3(),middlewares.TimeoutMiddleware(time.Second*60))
 	// 静态路由
 	core.Get("/", RootControllerHandler)
 	core.Get("/foo", FooControllerHandler)

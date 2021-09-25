@@ -44,6 +44,7 @@ func UserVipVersionControllerHandler(ctx *framework.Context) error {
 
 func GetQueryParamControllerHandler(ctx *framework.Context) error {
 	userid, _ := ctx.QueryInt("id", -1)
+	time.Sleep(time.Second*15)
 	ctx.GetResponseWriter().Write([]byte(cast.ToString(userid)))
 	return nil
 }

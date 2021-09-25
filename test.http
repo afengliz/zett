@@ -58,3 +58,7 @@ Host: 127.0.0.1:8888
 ###
 GET /user/test_redirect HTTP/1.1
 Host: localhost:8888
+
+###
+GET /user/info?id=123 HTTP/1.1
+Host: localhost:8888

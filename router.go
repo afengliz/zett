@@ -1,40 +1,36 @@
 package main
 
 import (
-	"github.com/afengliz/zett/framework"
-	"github.com/afengliz/zett/framework/middlewares"
-	"time"
+	"github.com/afengliz/zett/framework/gin"
 )
 
-func RegisterRouter(core *framework.Core) {
-	// middleware支持
-	core.Use(middlewares.Test3(),middlewares.TimeoutMiddleware(time.Second*60))
+func RegisterRouter(core *gin.Engine) {
 	// 静态路由
-	core.Get("/", RootControllerHandler)
-	core.Get("/foo", FooControllerHandler)
-	core.Get("/hello", HelloControllerHandler)
+	core.GET("/", RootControllerHandler)
+	core.GET("/foo", FooControllerHandler)
+	core.GET("/hello", HelloControllerHandler)
 	uGroup := core.Group("/user")
 	{
-		uGroup.Get("/", UserRootControllerHandler)
+		uGroup.GET("/", UserRootControllerHandler)
 		// 动态路由
-		uGroup.Get("/list", UserListControllerHandler)
-		uGroup.Get("/:id/info",  UserInfoGetControllerHandler)
+		uGroup.GET("/list", UserListControllerHandler)
+		uGroup.GET("/:id/info",  UserInfoGetControllerHandler)
 		vGroup := uGroup.Group("/vip")
 		{
-			vGroup.Get("/version", UserVipVersionControllerHandler)
+			vGroup.GET("/version", UserVipVersionControllerHandler)
 		}
-		uGroup.Get("/info", GetQueryParamControllerHandler)
-		uGroup.Post("/test_form", PostFormParamControllerHandler)
-		uGroup.Post("/test_json", TestJsonControllerHandler)
-		uGroup.Post("/test_xml", TestXmlControllerHandler)
-		uGroup.Post("/test_get_client_address", TestGetClientAddress)
-		uGroup.Post("/test_form_file", TestFormFile)
-		uGroup.Post("/test_header", TestHeaderControllerHandler)
-		uGroup.Post("/test_cookie", TestCookieControllerHandler)
-		uGroup.Get("/test_jsonp", TestJsonPControllerHandler)
-		uGroup.Post("/test_html", TestHtmlControllerHandler)
-		uGroup.Post("/test_text", TestTextControllerHandler)
-		uGroup.Get("/test_redirect", TestRedirectControllerHandler)
+		uGroup.GET("/info", GetQueryParamControllerHandler)
+		uGroup.POST("/test_form", PostFormParamControllerHandler)
+		uGroup.POST("/test_json", TestJsonControllerHandler)
+		uGroup.POST("/test_xml", TestXmlControllerHandler)
+		uGroup.POST("/test_get_client_address", TestGetClientAddress)
+		uGroup.POST("/test_form_file", TestFormFile)
+		uGroup.POST("/test_header", TestHeaderControllerHandler)
+		uGroup.POST("/test_cookie", TestCookieControllerHandler)
+		uGroup.GET("/test_jsonp", TestJsonPControllerHandler)
+		uGroup.POST("/test_html", TestHtmlControllerHandler)
+		uGroup.POST("/test_text", TestTextControllerHandler)
+		uGroup.GET("/test_redirect", TestRedirectControllerHandler)
 
 	}
 }

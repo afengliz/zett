@@ -2,60 +2,52 @@ package main
 
 import (
 	"fmt"
-	"github.com/afengliz/zett/framework"
+	"github.com/afengliz/zett/framework/gin"
 	"github.com/spf13/cast"
 	"time"
 )
 
-func RootControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("I am /"))
-	return nil
+func RootControllerHandler(ctx *gin.Context) {
+	ctx.Writer.Write([]byte("I am /"))
 }
-func FooControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("I am /foo"))
-	return nil
+func FooControllerHandler(ctx *gin.Context) {
+	ctx.Writer.Write([]byte("I am /foo"))
 }
 
-func HelloControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("I am /hello"))
-	return nil
+func HelloControllerHandler(ctx *gin.Context) {
+	ctx.Writer.Write([]byte("I am /hello"))
 }
 
-func UserInfoGetControllerHandler(ctx *framework.Context) error {
+func UserInfoGetControllerHandler(ctx *gin.Context) {
 	time.Sleep(time.Millisecond * 500)
-	paramId, _ := ctx.ParamInt("id", -1)
-	ctx.Json(200, fmt.Sprintf("I am /user/:id/info data:%d", paramId))
-	return nil
+	paramId, _ := ctx.DefaultParamInt("id", -1)
+	ctx.IJson(200, fmt.Sprintf("I am /user/:id/info data:%d", paramId))
 }
 
-func UserRootControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("I am /user root"))
-	return nil
+func UserRootControllerHandler(ctx *gin.Context)  {
+	ctx.Writer.Write([]byte("I am /user root"))
 }
-func UserListControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("I am /user/list"))
-	return nil
+func UserListControllerHandler(ctx *gin.Context)  {
+	ctx.Writer.Write([]byte("I am /user/list"))
+
 }
 
-func UserVipVersionControllerHandler(ctx *framework.Context) error {
-	ctx.GetResponseWriter().Write([]byte("I am /user/vip/version"))
-	return nil
+func UserVipVersionControllerHandler(ctx *gin.Context) {
+	ctx.Writer.Write([]byte("I am /user/vip/version"))
 }
 
-func GetQueryParamControllerHandler(ctx *framework.Context) error {
-	userid, _ := ctx.QueryInt("id", -1)
+func GetQueryParamControllerHandler(ctx *gin.Context)  {
+	userid, _ := ctx.DefaultQueryInt("id", -1)
 	time.Sleep(time.Second*15)
-	ctx.GetResponseWriter().Write([]byte(cast.ToString(userid)))
-	return nil
+	ctx.Writer.Write([]byte(cast.ToString(userid)))
 }
 
-func PostFormParamControllerHandler(ctx *framework.Context) error {
-	userid, _ := ctx.FormInt("id", -1)
-	ctx.GetResponseWriter().Write([]byte(cast.ToString(userid)))
-	return nil
+func PostFormParamControllerHandler(ctx *gin.Context) {
+	userid, _ := ctx.DefaultFormInt("id", -1)
+	ctx.Writer.Write([]byte(cast.ToString(userid)))
 }
 
-func TestJsonControllerHandler(ctx *framework.Context) error {
+func TestJsonControllerHandler(ctx *gin.Context)  {
 	type Student struct {
 		Name string `json:"name"`
 		Age int `json:"age"`
@@ -63,16 +55,14 @@ func TestJsonControllerHandler(ctx *framework.Context) error {
 	s := Student{}
 	err := ctx.BindJson(&s)
 	if err != nil{
-		ctx.Json(500,err.Error())
-		return err
+		ctx.IJson(500,err.Error())
 	}
 	res := fmt.Sprintf("%+v",s)
-	ctx.Json(200,res)
-	return nil
+	ctx.IJson(200,res)
 }
 
 
-func TestXmlControllerHandler(ctx *framework.Context) error {
+func TestXmlControllerHandler(ctx *gin.Context) {
 	type Student struct {
 		Name string `xml:"name"`
 		Age int `xml:"age"`
@@ -80,57 +70,52 @@ func TestXmlControllerHandler(ctx *framework.Context) error {
 	s := Student{}
 	err := ctx.BindXml(&s)
 	if err != nil{
-		ctx.Json(500,err.Error())
-		return err
+		ctx.IJson(500,err.Error())
 	}
-	ctx.Xml(s)
-	return nil
+	ctx.IXml(s)
 }
 
-func TestGetClientAddress(ctx *framework.Context) error {
-	ctx.Json(200,ctx.ClientIp())
-	return nil
+func TestGetClientAddress(ctx *gin.Context)  {
+	ctx.IJson(200,ctx.ClientIp())
 }
 
-func TestFormFile(ctx *framework.Context) error {
+func TestFormFile(ctx *gin.Context) {
 	header,_ := ctx.FormFile("field-name")
 	fmt.Printf("%+v",header)
-	ctx.Json(200,ctx.ClientIp())
-	return nil
+	ctx.IJson(200,ctx.ClientIp())
 }
 
-func TestHeaderControllerHandler(ctx *framework.Context) error {
-	hMap,_ := ctx.Header("Username")
-	return ctx.Json(200,hMap)
+func TestHeaderControllerHandler(ctx *gin.Context) {
+	hMap := ctx.GetHeader("Username")
+	ctx.IJson(200,hMap)
 }
 
-func TestCookieControllerHandler(ctx *framework.Context) error {
+func TestCookieControllerHandler(ctx *gin.Context)  {
 	hMap := ctx.Cookies()
-	return ctx.Json(200,hMap)
+	ctx.IJson(200,hMap)
 }
 
-func TestJsonPControllerHandler(ctx *framework.Context) error{
+func TestJsonPControllerHandler(ctx *gin.Context) {
 	type Student struct{
 		Name string `json:"name"`
 		Age int `json:"age"`
 	}
-	return ctx.JsonP(Student{"liyanfeng",26})
+	ctx.IJsonP(Student{"liyanfeng",26})
 }
 
-func TestHtmlControllerHandler(ctx *framework.Context) error{
+func TestHtmlControllerHandler(ctx *gin.Context) {
 	type Student struct{
 		Name string `json:"name"`
 		Age int `json:"age"`
 	}
-	return ctx.Html("./test_html_template.html",Student{"liyanfeng",26})
+	 ctx.IHtml("./test_html_template.html",Student{"liyanfeng",26})
 }
 
-func TestTextControllerHandler(ctx *framework.Context) error{
+func TestTextControllerHandler(ctx *gin.Context) {
 	format := "my name is %s,age is %d"
-	return ctx.Text(format,"liyanfeng",26)
+	ctx.IText(format,"liyanfeng",26)
 }
 
-func TestRedirectControllerHandler(ctx *framework.Context) error{
-	ctx.Redirect("/user/info")
-	return nil
+func TestRedirectControllerHandler(ctx *gin.Context){
+	ctx.IRedirect("/user/info")
 }

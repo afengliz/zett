@@ -19,9 +19,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gin-contrib/sse"
 	"github.com/afengliz/zett/framework/gin/binding"
 	"github.com/afengliz/zett/framework/gin/render"
+	"github.com/gin-contrib/sse"
 )
 
 // Content-Type MIME of the most common data formats.
@@ -858,10 +858,6 @@ func (c *Context) GetHeader(key string) string {
 	return c.requestHeader(key)
 }
 
-// GetRawData return stream data.
-func (c *Context) GetRawData() ([]byte, error) {
-	return ioutil.ReadAll(c.Request.Body)
-}
 
 // SetSameSite with cookie
 func (c *Context) SetSameSite(samesite http.SameSite) {

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/afengliz/zett/framework/gin"
+	"github.com/afengliz/zett/provider/demo"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ import (
 
 func main() {
 	core := gin.New()
+	core.Bind(demo.DemoServiceProvider{})
 	server := http.Server{Addr: ":8888", Handler: core}
 	RegisterRouter(core)
 	go func() {

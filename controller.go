@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/afengliz/zett/framework/gin"
+	"github.com/afengliz/zett/provider/demo"
 	"github.com/spf13/cast"
 	"time"
 )
@@ -119,3 +120,10 @@ func TestTextControllerHandler(ctx *gin.Context) {
 func TestRedirectControllerHandler(ctx *gin.Context){
 	ctx.IRedirect("/user/info")
 }
+
+
+func PostDemoTestControllerHandler(ctx *gin.Context){
+	service :=ctx.MustMake(demo.Key).(*demo.DemoService)
+	ctx.IJson(200,service.GetFoo())
+}
+

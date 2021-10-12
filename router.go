@@ -33,4 +33,8 @@ func RegisterRouter(core *gin.Engine) {
 		uGroup.GET("/test_redirect", TestRedirectControllerHandler)
 
 	}
+	dGroup := core.Group("/demo")
+	{
+		dGroup.POST("/test", PostDemoTestControllerHandler)
+	}
 }

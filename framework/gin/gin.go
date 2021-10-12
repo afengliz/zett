@@ -6,6 +6,7 @@ package gin
 
 import (
 	"fmt"
+	"github.com/afengliz/zett/framework"
 	"html/template"
 	"net"
 	"net/http"
@@ -56,7 +57,8 @@ type RoutesInfo []RouteInfo
 // Create an instance of Engine, by using New() or Default()
 type Engine struct {
 	RouterGroup
-
+	// 容器 container
+	container framework.Container
 	// Enables automatic redirection if the current route can't be matched but a
 	// handler for the path with (without) the trailing slash exists.
 	// For example if /foo/ is requested but a route only exists for /foo, the
@@ -168,6 +170,7 @@ func New() *Engine {
 		trees:                  make(methodTrees, 0, 9),
 		delims:                 render.Delims{Left: "{{", Right: "}}"},
 		secureJSONPrefix:       "while(1);",
+		container:              framework.NewZettContainer(),
 	}
 	engine.RouterGroup.engine = engine
 	engine.pool.New = func() interface{} {
@@ -186,7 +189,7 @@ func Default() *Engine {
 
 func (engine *Engine) allocateContext() *Context {
 	v := make(Params, 0, engine.maxParams)
-	return &Context{engine: engine, params: &v}
+	return &Context{engine: engine, params: &v,container: engine.container}
 }
 
 // Delims sets template left and right delims and returns a Engine instance.

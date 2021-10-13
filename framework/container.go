@@ -44,7 +44,10 @@ func (zett *ZettContainer) Bind(provider ServiceProvider) error{
 	zett.lock.Lock()
 	defer zett.lock.Unlock()
 	key := provider.Name()
-	zett.providers[key] = provider
+	if _,ok := zett.providers[key];ok{
+		return errors.New(fmt.Sprintf("service provider %s is exist",key))
+	}
+	zett.providers[key]= provider
 	if !provider.IsDefer(){
 		params := provider.Params(zett)
 		if err := provider.Boot(zett);err != nil{

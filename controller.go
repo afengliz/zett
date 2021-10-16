@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/afengliz/zett/app/provider/demo"
 	"github.com/afengliz/zett/framework/gin"
-	"github.com/afengliz/zett/provider/demo"
 	"github.com/spf13/cast"
 	"time"
 )

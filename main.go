@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/afengliz/zett/app/provider/demo"
 	"github.com/afengliz/zett/framework/gin"
-	"github.com/afengliz/zett/provider/demo"
 	"log"
 	"net/http"
 	"os"

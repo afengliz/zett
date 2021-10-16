@@ -1,6 +1,9 @@
 package gin
 
-import "github.com/afengliz/zett/framework"
+import (
+	"context"
+	"github.com/afengliz/zett/framework"
+)
 
 func (engine *Engine) Bind(provider framework.ServiceProvider)error{
 	return engine.container.Bind(provider)
@@ -17,4 +20,7 @@ func(ctx *Context) MustMake(key string) interface{} {
 }
 func(ctx *Context) MakeNew(key string,params ...interface{}) (interface{},error) {
 	return ctx.container.MakeNew(key)
+}
+func (ctx *Context) BaseContext() context.Context {
+	return ctx.Request.Context()
 }

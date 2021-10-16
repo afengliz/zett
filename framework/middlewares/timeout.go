@@ -2,16 +2,15 @@ package middlewares
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"github.com/afengliz/zett/framework"
+	"github.com/afengliz/zett/framework/gin"
 	"time"
 )
 
-func TimeoutMiddleware(t time.Duration) framework.ControllerHandler {
-	return func(ctx *framework.Context) error {
+func TimeoutMiddleware(t time.Duration) gin.HandlerFunc {
+	return func(ctx *gin.Context)  {
 		panicChan := make(chan interface{}, 1)
-		finishChan := make(chan error, 1)
+		finishChan := make(chan struct{}, 1)
 		toutCtx, cancel := context.WithTimeout(ctx.BaseContext(), t)
 		defer cancel()
 		go func() {
@@ -20,24 +19,17 @@ func TimeoutMiddleware(t time.Duration) framework.ControllerHandler {
 					panicChan <- err
 				}
 			}()
-			ans := ctx.Next()
-			finishChan <- ans
+			ctx.Next()
+			finishChan <- struct {}{}
 		}()
-		var anserr error
 		select {
-		case err:=<-finishChan:
-			if err != nil{
-				ctx.Json(500, err.Error())
-			}
+		case <-finishChan:
+			fmt.Println("finish")
 		case err := <-panicChan:
 			fmt.Println("panic:", err)
-			ctx.Json(500, "panic")
-			anserr = errors.New(fmt.Sprintf("panic err:%+v", err))
+			ctx.IJson(500, "panic")
 		case <-toutCtx.Done():
-			ctx.Json(500, "time out")
-			ctx.SetHasTimeOut()
-			anserr = errors.New("time out")
+			ctx.IJson(500, "time out")
 		}
-		return anserr
 	}
 }

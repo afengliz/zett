@@ -2,14 +2,13 @@ package middlewares
 
 import (
 	"fmt"
-	"github.com/afengliz/zett/framework"
+	"github.com/afengliz/zett/framework/gin"
 )
 
-func Test3() framework.ControllerHandler {
-	return func(ctx *framework.Context) error {
+func Test3() gin.HandlerFunc {
+	return func(ctx *gin.Context)  {
 		fmt.Println("middleware pre test3")
 		ctx.Next()
 		fmt.Println("middleware post test3")
-		return nil
 	}
 }

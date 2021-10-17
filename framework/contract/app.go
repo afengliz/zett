@@ -1,7 +1,7 @@
 package contract
 
 // AppKey 字符串凭证
-const AppKey = "hade:app"
+const AppKey = "zett:app"
 // App 定义接口
 type App interface {
 	// Version 定义当前版本

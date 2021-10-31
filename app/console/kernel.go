@@ -1,6 +1,7 @@
 package console
 
 import (
+	"github.com/afengliz/zett/app/console/command/demo"
 	"github.com/afengliz/zett/framework"
 	"github.com/afengliz/zett/framework/cobra"
 	"github.com/afengliz/zett/framework/command"
@@ -34,5 +35,5 @@ func RunCommand(container framework.Container){
 }
 // AddAppCommands 绑定业务级别的命令
 func AddAppCommands(rootCmd *cobra.Command){
-
+	rootCmd.AddCronCommand("* * * * * *",demo.FooCommand)
 }

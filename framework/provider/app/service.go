@@ -2,7 +2,6 @@ package app
 
 import (
 	"errors"
-	"flag"
 	"github.com/afengliz/zett/framework"
 	"github.com/afengliz/zett/framework/contract"
 	"github.com/afengliz/zett/framework/utils"
@@ -22,12 +21,8 @@ func (z ZettApp) BaseFolder() string {
 	if z.baseFolder != "" {
 		return z.baseFolder
 	}
-	var baseFolder string
-	flag.StringVar(&baseFolder,"base_folder","","base_folder参数, 默认为当前路径")
-	flag.Parse()
-	if baseFolder != ""{
-		return baseFolder
-	}
+
+	// 如果参数也没有，使用默认的当前路径
 	return utils.GetExecDirectory()
 
 }
@@ -53,7 +48,7 @@ func (z ZettApp) CommandFolder() string {
 }
 
 func (z ZettApp) RuntimeFolder() string {
-	return filepath.Join(z.BaseFolder(), "storage","runtime")
+	return filepath.Join(z.BaseFolder(), "runtime")
 }
 
 func (z ZettApp) TestFolder() string {
